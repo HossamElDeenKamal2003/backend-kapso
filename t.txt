@@ -1,0 +1,19 @@
+home: 
+    - 1 day for edit design
+    - 1 day review and fix issus 
+search:
+    - 1 day for review , integrate it to backend
+posts:
+    - 1 day to add missing fueture
+    - 1 day review and fix issus 
+reals:
+    - 1 day to add missing fueture
+    - 1 day review and fix issus
+lives:
+    - 1 day for edit design
+    - 1 day review and fix issus 
+    - 1 day deploy server(it complex)
+    - 1 day integrate server with app
+profile
+    - 2 day to add missing fueture
+    - 1 day review and fix issus 

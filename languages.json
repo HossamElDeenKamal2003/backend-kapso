@@ -1,0 +1,63 @@
+{
+  "login-success": {
+    "ar": "تم تسجيل الدخول بنجاح",
+    "en": "You have logged in successfully"
+  },
+  "signup-success": {
+    "ar": "تم التسجيل بنجاح! مرحباً بك.",
+    "en": "Signup successful! Welcome aboard."
+  },
+  "family-not-found": {
+    "ar": "أنت لست جزءًا من أي عائلة حتى الآن!",
+    "en": "You're not part of any family yet."
+  },
+  "join-to-family": {
+    "ar": "انضم إلى عائلة لزيادة أرباحك والتواصل مع الآخرين",
+    "en": "Join a family to boost your earnings and connect with others!"
+  },
+  "login-id-not-found": { "ar": "المعرف غير موجود", "en": "ID not found." },
+  "login-mail-not-found": {
+    "ar": "البريد الإلكتروني غير موجود. يرجى التحقق والمحاولة مرة أخرى",
+    "en": "Email not found. Please check and try again"
+  },
+  "login-password-incorrect": {
+    "ar": "كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى",
+    "en": "Incorrect password. Please try again."
+  },
+  "email-exist": {
+    "ar": "البريد الإلكتروني موجود بالفعل. يرجى استخدام بريد آخر",
+    "en": "Email already exists. Please use a different one."
+  },
+  "otp-phone-send": {
+    "ar": "تم إرسال OTP إلى رقم هاتفك",
+    "en": "An OTP has been sent to your phone number"
+  },
+  "phone-number-used": {
+    "ar": "رقم الهاتف مُستخدم بالفعل.",
+    "en": "This phone number is already in use."
+  },
+  "otp-mail-send": {
+    "ar": "لقد تم إرسال (OTP) إلى بريدك الإلكتروني",
+    "en": "An OTP has been sent to your Email"
+  },
+  "otp-invaild": { "ar": "رمز OTP غير صالح", "en": "Invalid OTP code" },
+  "set-preferences": {
+    "ar": "تمت إضافة التفضيلات بنجاح",
+    "en": "Preferences added successfully"
+  },
+  "set-profile": {
+    "ar": "تم تحديث الملف الشخصي بنجاح",
+    "en": "The profile has been updated successfully"
+  },
+  "vaild-username": { "ar": "اسم مستخدم صالح", "en": "Vaild Username" },
+  "invaild-username": { "ar": "مستخدم بالفعل", "en": "Already Used" },
+  "post-created": {
+    "ar": "تم إنشاء المنشور بنجاح",
+    "en": "Post created successfully"
+  },
+  "message-invaild": { "en": "Invalid message", "ar": "رسالة غير صالحة" },
+  "insufficientFunds": {
+    "en": "You don't have enough balance to make this purchase.",
+    "ar": "ليس لديك رصيد كافٍ لإتمام هذه العملية."
+  }
+}

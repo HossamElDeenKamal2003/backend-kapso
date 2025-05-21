@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package room;
+
+option go_package = "/pkg/protobuf";
+
+
+message PeerInfo {
+  string id = 1;
+  string cover = 2;
+  string image = 3;
+  string name = 4;
+}
+
+service Room {
+  rpc Create (CreateRoomRequest) returns (CreateRoomResponse);
+  rpc Join (JoinRoomRequest) returns (JoinRoomResponse);
+}
+
+enum LiveType {
+  video = 0;
+  audio = 1;
+}
+
+message CreateRoomRequest {
+  string offer = 1;
+  string liveId = 2;
+  LiveType liveType = 3;
+  PeerInfo peerInfo = 4;
+}
+
+message CreateRoomResponse {
+  string answer = 1;
+}
+
+message JoinRoomRequest {
+  string offer = 1;
+  string roomId = 2;
+  bool hasAudioAccess =3;
+  bool hasVideoAccess =4;
+  PeerInfo peerInfo=5;
+}
+
+
+message JoinRoomResponse {
+  string answer = 1;
+}

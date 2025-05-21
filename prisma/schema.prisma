@@ -1,0 +1,481 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type Language {
+  ar String
+  en String
+}
+
+type Asset {
+  url      String
+  size     Int
+  mimeType String
+}
+
+type Call {
+  isReceived Boolean
+  isAnswered Boolean
+  endAt      DateTime?
+}
+
+type PostContent {
+  text   String?
+  images String[]
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model User {
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  username              String              @unique
+  name                  String?
+  bio                   String?
+  image                 String?
+  cover                 String?
+  birthDate             DateTime?
+  gender                Gender?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  lastConnect           DateTime            @default(now())
+  lastNotificationsSeen DateTime            @default(now())
+  role                  Role?               @relation(fields: [roleId], references: [id])
+  roleId                String?             @db.ObjectId
+  bag                   Bag?
+  agency                AgencyMember?
+  authByEmail           AuthByEmail?
+  authByPhoneNumber     AuthByPhoneNumber?
+  authByGoogle          AuthByGoogle?
+  authByApple           AuthByApple?
+  authByFacebook        AuthByFacebook?
+  authByPassword        AuthByPassword?
+  familyMember          FamilyMember?
+  reels                 Reel[]
+  reelsLoves            ReelLove[]
+  reelsSaves            ReelSave[]
+  reelsComments         ReelComment[]
+  followers             Follower[]          @relation("FollowersRelation")
+  following             Follower[]          @relation("FollowingRelation")
+  posts                 Post[]
+  postComments          PostComment[]
+  postSaves             PostSave[]
+  postLoves             PostLove[]
+  messages              Message[]
+  chats                 UserChat[]
+  blockedBy             Block[]             @relation("BlockedBy")
+  blockedFor            Block[]             @relation("BlockedFor")
+  roomMembers           RoomMember[]
+  notificationTokens    NotificationToken[]
+  notifications         NotificationUser[]
+  postCommentLoves      PostCommentLove[]
+  reelCommentLoves      ReelCommentLove[]
+}
+
+model AgencyMember {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  agency   Agency  @relation(fields: [agencyId], references: [id])
+  agencyId String  @db.ObjectId
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String  @unique @db.ObjectId
+  isOwner  Boolean @default(false)
+}
+
+model Agency {
+  id      String         @id @default(auto()) @map("_id") @db.ObjectId
+  members AgencyMember[]
+}
+
+model Role {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String @unique
+  users User[]
+}
+
+model AuthByEmail {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  password String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @unique @db.ObjectId
+}
+
+model AuthByPhoneNumber {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  phoneNumber String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String @unique @db.ObjectId
+}
+
+model AuthByPassword {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  password String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @unique @db.ObjectId
+}
+
+model AuthByGoogle {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String  @unique
+  email       String  @unique
+  name        String?
+  phoneNumber String?
+  username    String?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String  @unique @db.ObjectId
+}
+
+model AuthByApple {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String  @unique
+  email       String  @unique
+  name        String?
+  phoneNumber String?
+  username    String?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String  @unique @db.ObjectId
+}
+
+model AuthByFacebook {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String  @unique
+  email       String  @unique
+  name        String?
+  phoneNumber String?
+  username    String?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String  @unique @db.ObjectId
+}
+
+model Reel {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  content     String?
+  url         String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  publisher   User          @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+  publisherId String        @db.ObjectId
+  loves       ReelLove[]
+  saves       ReelSave[]
+  comments    ReelComment[]
+}
+
+model ReelLove {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  reel      Reel     @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  reelId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+
+  @@unique([reelId, userId])
+}
+
+model ReelSave {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  reel      Reel     @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  reelId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+
+  @@unique([reelId, userId])
+}
+
+model ReelComment {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  content          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  reel             Reel              @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  reelId           String            @db.ObjectId
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String            @db.ObjectId
+  reelCommentLoves ReelCommentLove[]
+}
+
+model ReelCommentLove {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  reelComment   ReelComment @relation(fields: [reelCommentId], references: [id], onDelete: Cascade)
+  reelCommentId String      @db.ObjectId
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String      @db.ObjectId
+
+  @@unique([reelCommentId, userId])
+}
+
+model Follower {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  follower    User     @relation("FollowingRelation", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String   @db.ObjectId
+  following   User     @relation("FollowersRelation", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String   @db.ObjectId
+
+  @@unique([followerId, followingId])
+}
+
+model Block {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  blocker   User     @relation("BlockedBy", fields: [blockerId], references: [id])
+  blockerId String   @db.ObjectId
+  blocked   User     @relation("BlockedFor", fields: [blockedId], references: [id])
+  blockedId String   @db.ObjectId
+
+  @@unique([blockerId, blockedId])
+}
+
+model Post {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  content     PostContent
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  publisher   User          @relation(fields: [publisherId], references: [id])
+  publisherId String        @db.ObjectId
+  comments    PostComment[]
+  saves       PostSave[]
+  loves       PostLove[]
+}
+
+model PostLove {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+
+  @@unique([postId, userId])
+}
+
+model PostSave {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+
+  @@unique([postId, userId])
+}
+
+model PostComment {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  content          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  post             Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId           String            @db.ObjectId
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String            @db.ObjectId
+  postCommentLoves PostCommentLove[]
+}
+
+model PostCommentLove {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  postComment   PostComment @relation(fields: [postCommentId], references: [id], onDelete: Cascade)
+  postCommentId String      @db.ObjectId
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String      @db.ObjectId
+
+  @@unique([postCommentId, userId])
+}
+
+model Family {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  name         String
+  slogan       String
+  announcement String
+  image        String
+  minimumLevel Int
+  members      FamilyMember[]
+  chat         Chat           @relation(fields: [chatId], references: [id])
+  chatId       String         @unique @db.ObjectId
+}
+
+model FamilyMember {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  earned    Int      @default(0)
+  isFounder Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @db.ObjectId
+  family    Family   @relation(fields: [familyId], references: [id])
+  familyId  String   @db.ObjectId
+
+  @@unique([userId, familyId])
+}
+
+type UserChatStatus {
+  isMute   Boolean  @default(false)
+  lastSeen DateTime @default(now())
+}
+
+enum ChatType {
+  CHAT
+  GROUP
+}
+
+model Chat {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  type      ChatType
+  messages  Message[]
+  members   UserChat[]
+  family    Family?
+
+  @@index([updatedAt])
+}
+
+model UserChat {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  status    UserChatStatus
+  chat      Chat           @relation(fields: [chatId], references: [id])
+  chatId    String         @db.ObjectId
+  user      User           @relation(fields: [userId], references: [id])
+  userId    String         @db.ObjectId
+
+  @@unique([chatId, userId])
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String?
+  record    String?
+  call      Call?
+  assets    Asset[]
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    String   @db.ObjectId
+  sender    User     @relation(fields: [senderId], references: [id])
+  senderId  String   @db.ObjectId
+
+  @@index([createdAt])
+}
+
+model NotificationUser {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String       @db.ObjectId
+  Notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String       @db.ObjectId
+
+  @@unique([userId, notificationId])
+}
+
+model Notification {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  users     NotificationUser[]
+  title     Language
+  body      Language
+  createdAt DateTime           @default(now())
+  data      Json?
+  type      String
+}
+
+model NotificationToken {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  token  String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+}
+
+model Live {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  liveType  String
+  createdAt DateTime  @default(now())
+  launchAt  DateTime?
+  closeAt   DateTime?
+  room      Room?
+  liveTags  LiveTag[]
+}
+
+model Room {
+  id      String       @id @default(auto()) @map("_id") @db.ObjectId
+  roomId  String       @unique
+  live    Live         @relation(fields: [liveId], references: [id])
+  liveId  String       @unique @db.ObjectId
+  members RoomMember[]
+}
+
+model RoomMember {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  joinAt      DateTime  @default(now())
+  exitAt      DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String    @db.ObjectId
+  room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId      String    @db.ObjectId
+  isPublisher Boolean   @default(false)
+
+  @@unique([userId, roomId])
+}
+
+model Tag {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  title    Language
+  liveTags LiveTag[]
+}
+
+model LiveTag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  live      Live     @relation(fields: [liveId], references: [id], onDelete: Cascade)
+  liveId    String   @db.ObjectId
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     String   @db.ObjectId
+
+  @@unique([liveId, tagId])
+}
+
+model Bag {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  user     User      @relation(fields: [userId], references: [id])
+  coins    Int       @default(0)
+  diamonds Int       @default(0)
+  userId   String    @unique @db.ObjectId
+  bagMall  BagMall[]
+}
+
+model BagMall {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  rentedFor Int
+  rentedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bag       Bag      @relation(fields: [bagId], references: [id], onDelete: Cascade)
+  bagId     String   @db.ObjectId
+  mall      Mall     @relation(fields: [mallId], references: [id], onDelete: Cascade)
+  mallId    String   @db.ObjectId
+
+  @@unique([bagId, mallId])
+}
+
+model Mall {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String @unique
+  url           String
+  type          String
+  priceForMonth Int
+
+  bagMall BagMall[]
+}
